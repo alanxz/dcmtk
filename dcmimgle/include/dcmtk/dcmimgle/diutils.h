@@ -91,6 +91,9 @@ const unsigned long CIF_DecompressCompletePixelData  = 0x0000800;
 
 /// never access embedded overlays since this requires to load and uncompress the complete pixel data
 const unsigned long CIF_NeverAccessEmbeddedOverlays  = 0x0001000;
+
+/// use floating point for the internal representation
+const unsigned long CIF_UseFloatingInternalRepresentation = 0x0002000;
 //@}
 
 
@@ -207,7 +210,9 @@ enum EP_Representation
     /// unsigned 32 bit integer
     EPR_Uint32, EPR_MaxUnsigned = EPR_Uint32,
     /// signed 32 bit integer
-    EPR_Sint32, EPR_MaxSigned = EPR_Sint32
+    EPR_Sint32, EPR_MaxSigned = EPR_Sint32,
+    /// floating point
+    EPR_float32
 };
 
 

@@ -113,6 +113,11 @@ inline EP_Representation DiPixelRepresentationTemplate<Sint32>::getRepresentatio
     return EPR_Sint32;
 }
 
+EXPLICIT_SPECIALIZATION
+inline EP_Representation DiPixelRepresentationTemplate<float>::getRepresentation() const
+{
+    return EPR_float32;
+}
 
 EXPLICIT_SPECIALIZATION
 inline int DiPixelRepresentationTemplate<Uint8>::isSigned() const
@@ -155,5 +160,10 @@ inline int DiPixelRepresentationTemplate<Sint32>::isSigned() const
     return 1;
 }
 
+EXPLICIT_SPECIALIZATION
+inline int DiPixelRepresentationTemplate<float>::isSigned() const
+{
+    return 1;
+}
 
 #endif

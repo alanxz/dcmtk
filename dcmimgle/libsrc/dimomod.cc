@@ -283,7 +283,9 @@ void DiMonoModality::checkRescaling(const DiInputPixel *pixel)
 void DiMonoModality::determineRepresentation(const DiDocument *docu)
 {
     UsedBits = DicomImageClass::rangeToBits(MinValue, MaxValue);
-    if ((docu != NULL) && (docu->getFlags() & CIF_UseAbsolutePixelRange))
+    if ((docu != NULL) && (docu->getFlags() & CIF_UseFloatingInternalRepresentation))
+        Representation = EPR_float32;
+    else if ((docu != NULL) && (docu->getFlags() & CIF_UseAbsolutePixelRange))
         Representation = DicomImageClass::determineRepresentation(AbsMinimum, AbsMaximum);
     else
         Representation = DicomImageClass::determineRepresentation(MinValue, MaxValue);

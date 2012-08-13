@@ -250,6 +250,9 @@ DiMonoImage::DiMonoImage(const DiMonoImage *image,
             case EPR_Sint32:
                 InterData = new DiMonoCopyTemplate<Sint32>(image->InterData, fstart, fcount, fsize);
                 break;
+            case EPR_float32:
+                InterData = new DiMonoCopyTemplate<float>(image->InterData, fstart, fcount, fsize);
+                break;
         }
     }
     checkInterData();
@@ -375,6 +378,11 @@ DiMonoImage::DiMonoImage(const DiMonoImage *image,
                     left_pos, top_pos, src_cols, src_rows, dest_cols, dest_rows, NumberOfFrames,
                     bits, interpolate, pvalue);
                 break;
+            case EPR_float32:
+                InterData = new DiMonoScaleTemplate<float>(image->InterData, image->Columns, image->Rows,
+                    left_pos, top_pos, src_cols, src_rows, dest_cols, dest_rows, NumberOfFrames,
+                    bits, interpolate, pvalue);
+                break;
         }
     }
     if (checkInterData(0))
@@ -447,6 +455,9 @@ DiMonoImage::DiMonoImage(const DiMonoImage *image,
             case EPR_Sint32:
                 InterData = new DiMonoFlipTemplate<Sint32>(image->InterData, Columns, Rows, NumberOfFrames, horz, vert);
                 break;
+            case EPR_float32:
+                InterData = new DiMonoFlipTemplate<float>(image->InterData, Columns, Rows, NumberOfFrames, horz, vert);
+                break;
         }
     }
     if (checkInterData(0))
@@ -518,6 +529,10 @@ DiMonoImage::DiMonoImage(const DiMonoImage *image,
                 break;
             case EPR_Sint32:
                 InterData = new DiMonoRotateTemplate<Sint32>(image->InterData, image->Columns, image->Rows, Columns, Rows,
+                    NumberOfFrames, degree);
+                break;
+            case EPR_float32:
+                InterData = new DiMonoRotateTemplate<float>(image->InterData, image->Columns, image->Rows, Columns, Rows,
                     NumberOfFrames, degree);
                 break;
         }
@@ -769,6 +784,9 @@ void DiMonoImage::InitUint8(DiMonoModality *modality)
             case EPR_Sint32:
                 InterData = new DiMonoInputPixelTemplate<Uint8, Uint32, Sint32>(InputData, modality);
                 break;
+            case EPR_float32:
+                InterData = new DiMonoInputPixelTemplate<Uint8, Uint32, float>(InputData, modality);
+                break;
         }
     }
 }
@@ -798,6 +816,9 @@ void DiMonoImage::InitSint8(DiMonoModality *modality)
             case EPR_Sint32:
                 InterData = new DiMonoInputPixelTemplate<Sint8, Sint32, Sint32>(InputData, modality);
                 break;
+            case EPR_float32:
+                InterData = new DiMonoInputPixelTemplate<Sint8, Sint32, float>(InputData, modality);
+                break;
         }
     }
 }
@@ -825,6 +846,9 @@ void DiMonoImage::InitUint16(DiMonoModality *modality)
                 break;
             case EPR_Sint32:
                 InterData = new DiMonoInputPixelTemplate<Uint16, Uint32, Sint32>(InputData, modality);
+                break;
+            case EPR_float32:
+                InterData = new DiMonoInputPixelTemplate<Uint16, Uint32, float>(InputData, modality);
                 break;
         }
     }
@@ -855,6 +879,9 @@ void DiMonoImage::InitSint16(DiMonoModality *modality)
             case EPR_Sint32:
                 InterData = new DiMonoInputPixelTemplate<Sint16, Sint32, Sint32>(InputData, modality);
                 break;
+            case EPR_float32:
+                InterData = new DiMonoInputPixelTemplate<Sint16, Sint32, float>(InputData, modality);
+                break;
         }
     }
 }
@@ -884,6 +911,9 @@ void DiMonoImage::InitUint32(DiMonoModality *modality)
             case EPR_Sint32:
                 InterData = new DiMonoInputPixelTemplate<Uint32, Uint32, Sint32>(InputData, modality);
                 break;
+            case EPR_float32:
+                InterData = new DiMonoInputPixelTemplate<Uint32, Uint32, float>(InputData, modality);
+                break;
         }
     }
 }
@@ -912,6 +942,9 @@ void DiMonoImage::InitSint32(DiMonoModality *modality)
                 break;
             case EPR_Sint32:
                 InterData = new DiMonoInputPixelTemplate<Sint32, Sint32, Sint32>(InputData, modality);
+                break;
+            case EPR_float32:
+                InterData = new DiMonoInputPixelTemplate<Sint32, Sint32, float>(InputData, modality);
                 break;
         }
     }
@@ -1412,6 +1445,11 @@ int DiMonoImage::flip(const int horz,
                 DiFlipTemplate<Sint32> dummy(InterData, Columns, Rows, NumberOfFrames, horz, vert);
             }
             break;
+        case EPR_float32:
+            {
+                DiFlipTemplate<float> dummy(InterData, Columns, Rows, NumberOfFrames, horz, vert);
+            }
+            break;
     }
     for (int i = 0; i < 2; ++i)
     {
@@ -1463,6 +1501,11 @@ int DiMonoImage::rotate(const int degree)
             case EPR_Sint32:
                 {
                     DiRotateTemplate<Sint32> dummy(InterData, old_cols, old_rows, Columns, Rows, NumberOfFrames, degree);
+                }
+                break;
+            case EPR_float32:
+                {
+                    DiRotateTemplate<float> dummy(InterData, old_cols, old_rows, Columns, Rows, NumberOfFrames, degree);
                 }
                 break;
         }
