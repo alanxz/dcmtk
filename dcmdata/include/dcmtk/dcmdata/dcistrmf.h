@@ -26,6 +26,7 @@
 #include "dcmtk/config/osconfig.h"
 #include "dcmtk/dcmdata/dcistrma.h"
 
+#include <fstream>
 
 /** producer class that reads data from a plain file.
  */
@@ -96,7 +97,7 @@ private:
   DcmFileProducer& operator=(const DcmFileProducer&);
 
   /// the file we're actually reading from
-  OFFile file_;
+  std::ifstream file_;
 
   /// status
   OFCondition status_;

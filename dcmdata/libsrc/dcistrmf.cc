@@ -31,26 +31,25 @@
 
 DcmFileProducer::DcmFileProducer(const OFFilename &filename, offile_off_t offset)
 : DcmProducer()
-, file_()
 , status_(EC_Normal)
 , size_(0)
 {
-  if (file_.fopen(filename, "rb"))
+  file_.open(filename.getCharPointer(), std::ios_base::in | std::ios_base::binary);
+
+  if (!file_.fail())
   {
      // Get number of bytes in file
-     file_.fseek(0L, SEEK_END);
-     size_ =  file_.ftell();
-     if (0 != file_.fseek(offset, SEEK_SET))
+     file_.seekg(0, std::ios_base::end);
+     size_ =  file_.tellg();
+     if (file_.seekg(offset, std::ios_base::beg).fail())
      {
        OFString s("(unknown error code)");
-       file_.getLastErrorString(s);
        status_ = makeOFCondition(OFM_dcmdata, 18, OF_error, s.c_str());
      }
   }
   else
   {
     OFString s("(unknown error code)");
-    file_.getLastErrorString(s);
     status_ = makeOFCondition(OFM_dcmdata, 18, OF_error, s.c_str());
   }
 }
@@ -71,24 +70,24 @@ OFCondition DcmFileProducer::status() const
 
 OFBool DcmFileProducer::eos()
 {
-  if (file_.open())
+  if (file_.is_open())
   {
-    return (file_.eof() || (size_ == file_.ftell()));
+    return (file_.eof() || (size_ == file_.tellg()));
   }
   else return OFTrue;
 }
 
 offile_off_t DcmFileProducer::avail()
 {
-  if (file_.open()) return size_ - file_.ftell(); else return 0;
+  if (file_.is_open()) return size_ - file_.tellg(); else return 0;
 }
 
 offile_off_t DcmFileProducer::read(void *buf, offile_off_t buflen)
 {
   offile_off_t result = 0;
-  if (status_.good() && file_.open() && buf && buflen)
+  if (status_.good() && file_.is_open() && buf && buflen)
   {
-    result = file_.fread(buf, 1, OFstatic_cast(size_t, buflen));
+    result = file_.readsome(static_cast<char *>(buf), buflen);
   }
   return result;
 }
@@ -96,14 +95,13 @@ offile_off_t DcmFileProducer::read(void *buf, offile_off_t buflen)
 offile_off_t DcmFileProducer::skip(offile_off_t skiplen)
 {
   offile_off_t result = 0;
-  if (status_.good() && file_.open() && skiplen)
+  if (status_.good() && file_.is_open() && skiplen)
   {
-    offile_off_t pos = file_.ftell();
+    offile_off_t pos = file_.tellg();
     result = (size_ - pos < skiplen) ? (size_ - pos) : skiplen;
-    if (file_.fseek(result, SEEK_CUR))
+    if (file_.seekg(result, std::ios_base::cur).fail())
     {
-      OFString s("(unknown error code)");
-      file_.getLastErrorString(s);
+      OFString s("std::fstream::seekg() failed");
       status_ = makeOFCondition(OFM_dcmdata, 18, OF_error, s.c_str());
     }
   }
@@ -112,15 +110,14 @@ offile_off_t DcmFileProducer::skip(offile_off_t skiplen)
 
 void DcmFileProducer::putback(offile_off_t num)
 {
-  if (status_.good() && file_.open() && num)
+  if (status_.good() && file_.is_open() && num)
   {
-    offile_off_t pos = file_.ftell();
+    offile_off_t pos = file_.tellg();
     if (num <= pos)
     {
-      if (file_.fseek(-num, SEEK_CUR))
+      if (file_.seekg(-num, std::ios_base::cur).fail())
       {
-        OFString s("(unknown error code)");
-        file_.getLastErrorString(s);
+        OFString s("std::fstream::seekg() failed");
         status_ = makeOFCondition(OFM_dcmdata, 18, OF_error, s.c_str());
       }
     }
